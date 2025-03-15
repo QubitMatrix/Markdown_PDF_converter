@@ -473,7 +473,9 @@ def markdown_pdf(filename):
         if(line and not len(line.strip()) and flags['add_newline']):
             coord[1] -= 30
             flags['add_newline'] = 0
-
+        
+        elif(line.strip() == '---' or line.strip() == '***' or line.strip() == '___'):
+            pdf_content += f"q\n{coord[0]} {coord[1]} {490} {3} re\nf\nQ\n"
         # Headings
         elif(heading_num):
             flags['add_newline'] = 1
