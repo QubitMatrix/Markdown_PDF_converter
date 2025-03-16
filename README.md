@@ -1,5 +1,5 @@
-# Markdown_PDF_convertor
-A Markdown to PDF convertor built from scratch and used to create printable markdown files.
+# Markdown_PDF_converter
+A Markdown to PDF converter built from scratch and used to create printable markdown files.
 
 ### Implemented Features
 - Bold, Italic, BoldItalic formatting
@@ -8,7 +8,7 @@ A Markdown to PDF convertor built from scratch and used to create printable mark
 - Unordered lists
 - Normal text
 - Code statements
-- Blockquotes
+- Simple Blockquotes
 - Horizontal break
 
 ### Future Implementation
@@ -20,4 +20,4 @@ A Markdown to PDF convertor built from scratch and used to create printable mark
 ### Pending Issues
 - Add background box for code statement
 - Fix content Length value and xref byte offsets
-- Single markdown line spanning multiple lines and reaching page end
+- ~Single markdown line spanning multiple lines and reaching page end~
