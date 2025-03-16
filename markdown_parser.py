@@ -455,9 +455,9 @@ def markdown_pdf(filename):
         heading_num = line.count('#')
         unordered_list = line.count('-')
         orderedlist_regex = "^\d. *"
-        
+        estimated_num_lines = len(line) // 80 
         # If y coordinate is less add new page
-        if(coord[1] < 100):
+        if((coord[1] - 15 * estimated_num_lines) < 100):
             content_length = len(pdf_content) # TO BE FIXED
             pdf_contents_obj += f"{page_obj_id-1} 0 obj\n<< /Length {content_length} >>\nstream\nBT\n{pdf_content}\nET\nendstream\nendobj\n"
             pdf_content = ""
