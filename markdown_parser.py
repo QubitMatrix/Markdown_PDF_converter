@@ -3,6 +3,7 @@ import sys
 
 # Format text for bold, italic, etc and handle multiline sentences
 def format_text(txt,coord,indent):
+    txt = txt.replace("(","\(").replace(")","\)")
     num_lines = 1
     total_chars = 90
     indent_chars = 3 * indent
@@ -339,16 +340,17 @@ def unordered_lists(line,coord,flags):
     indent = line.count("\t")
     txt = line[line.index(' ')+1:].strip()
 
-    # Format text content
-    txt,num_lines = format_text(txt,coord,indent)
-
     fill = 's' if indent%2 else 'f' # Set bullet point fill option
 
     # Set text coordinates
-    x_coord = coord[0]
     coord[1] = coord[1] if(indent or not flags['add_yspace']) else coord[1] - 10
     y_coord = coord[1]
-    x_coord += (indent+1)*20
+    coord[0] += (indent+1)*20
+    x_coord = coord[0]
+
+    # Format text content
+    txt,num_lines = format_text(txt,coord,indent)
+    coord[0] -= (indent+1)*20
 
     # Circle bullet point
     if(indent < 2):
@@ -377,15 +379,17 @@ def ordered_lists(line, coord,flags):
     num = int(line_stripped[:line_stripped.index('.')])
     txt = line_stripped[line_stripped.index('.')+2:]
 
+    # Set text coordinates
+    coord[0] = coord[0] + 10 + (indent*20) + 21
+    coord[1] = coord[1] if(num != 1 or indent or not flags['add_yspace']) else coord[1] - 10
+    x_coord = coord[0] - 21
+    y_coord = coord[1]
+
     # Format text
     txt,num_lines = format_text(txt,coord,indent)
 
-    # Set text coordinates
-    x_coord = coord[0] + 10 + (indent*20)
-    coord[1] = coord[1] if(num != 1 or indent or not flags['add_yspace']) else coord[1] - 10
-    y_coord = coord[1]
-
-    pdf_line = f"/F1 12 Tf\n1 0 0 1 {x_coord} {y_coord} Tm\n({num}. ) Tj\n{txt}\n"
+    pdf_line = f"/F1 12 Tf\n1 0 0 1 {x_coord} {y_coord} Tm\n({num}. ) Tj\n1 0 0 1 {coord[0]} {y_coord} Tm\n{txt}\n"
+    coord[0] = coord[0] - 10 - (indent*20) - 21
     coord[1] -= 15
     flags['add_yspace'] = 1
     return pdf_line
@@ -453,7 +457,7 @@ def markdown_pdf(filename):
     for line in lines:
         print(line)
         heading_num = line.count('#')
-        unordered_list = line.count('-')
+        unorderedlist_regex = "^- *"
         orderedlist_regex = "^\d. *"
         estimated_num_lines = len(line) // 80 
         # If y coordinate is less add new page
@@ -484,7 +488,7 @@ def markdown_pdf(filename):
             pdf_content += headings(line,coord,flags)
         
         # Unordereed lists
-        elif(unordered_list == 1):
+        elif(re.search(unorderedlist_regex,line.strip())):
             flags['add_newline'] = 1
             pdf_content += unordered_lists(line,coord,flags)
 
