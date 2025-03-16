@@ -473,9 +473,11 @@ def markdown_pdf(filename):
         if(line and not len(line.strip()) and flags['add_newline']):
             coord[1] -= 30
             flags['add_newline'] = 0
-        
+       
+        # Horizontal break
         elif(line.strip() == '---' or line.strip() == '***' or line.strip() == '___'):
-            pdf_content += f"q\n{coord[0]} {coord[1]} {490} {3} re\nf\nQ\n"
+            pdf_content += f"q\n{coord[0]} {coord[1]} {490} {2} re\nf\nQ\n"
+        
         # Headings
         elif(heading_num):
             flags['add_newline'] = 1
@@ -506,13 +508,14 @@ def markdown_pdf(filename):
     pdf_contents_obj += f"{page_obj_id-1} 0 obj\n<< /Length {content_length} >>\nstream\nBT\n{pdf_content}\nET\nendstream\nendobj\n"
 
     # Form the pdf header and trailer
-    pdf_header = f"%PDF-1.4\n1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n2 0 obj\n<< /Type /Pages /Kids [{page_ids}] /Count {page_count} >>\nendobj\n3 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n4 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>\nendobj\n5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Oblique >>\nendobj\n6 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-BoldOblique >>\nendobj\n7 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Courier-Bold >>\nendobj\n"
+    pdf_header = f"%PDF-1.4\n1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n2 0 obj\n<< /Type /Pages /Kids [{page_ids}] /Count {page_count} >>\nendobj\n3 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Times-Roman >>\nendobj\n4 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Times-Bold >>\nendobj\n5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Times-Italic >>\nendobj\n6 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Times-BoldItalic >>\nendobj\n7 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Courier-Bold >>\nendobj\n"
 
-    pdf_trailer = f"xref\n0 9 % No of objects +1\n0000000000 65535 f % first object is always free\n0000000010 00000 n % in use\n0000000053 00000 n\n0000000101 00000 n\n0000000230 00000 n\n0000000331 00000 n\n0000000412 00000 n\ntrailer\n<< /Size 9 /Root 1 0 R >> % 9 - no.objcets\nstartxref\n474\n%%EOF"
+    pdf_trailer = f"xref\n0 9 % No of objects +1\n0000000000 65535 f % first object is always free\n0000000010 00000 n % in use\n0000000053 00000 n\n0000000101 00000 n\n0000000230 00000 n\n0000000331 00000 n\n0000000412 00000 n\ntrailer\n<< /Size 9 /Root 1 0 R >> % 9 - no.objcets\nstartxref\n474\n%%EOF" # TO BE FIXED
 
     # Combine all parts of the Raw PDF and write into a PDF file
     pdf_str = f"{pdf_header}\n{pdf_pages}\n{pdf_contents_obj}\n{pdf_trailer}"
-    pdf_file = open("/mnt/c/users/preet/OneDrive/Desktop/pdf_file.pdf","w")
+    pdf = f"{filename.split('.')[0]}.pdf"
+    pdf_file = open(pdf,"w")
     print(pdf_str, file=pdf_file)
     pdf_file.close()
 
