@@ -275,7 +275,7 @@ def format_text(txt,coord,indent):
                             end_index = available_chars - code_txt[:available_chars][::-1].index(' ') - 1
                             width = 6.3 * end_index # Background box - FUTURE FEATURE
                             x_shift = written_txt * 5.4 # Background box - FUTURE FEATURE
-                            pdf_txt += f"q\n0.3 0.6 0.8 rg\n/F5 10 Tf\n({code_txt[:end_index]}) Tj\n0 0 0 rg\nQ\n1 0 0 1 {coord[0]} {coord[1] - 15} Tm\n"
+                            pdf_txt += f"0.3 0.6 0.8 rg\n/F5 10 Tf\n({code_txt[:end_index]}) Tj\n0 0 0 rg\n1 0 0 1 {coord[0]} {coord[1] - 15} Tm\n"
                         except:
                             pdf_txt += f"1 0 0 1 {coord[0]} {coord[1] - 15} Tm\n"
                             end_index = 0
@@ -288,7 +288,7 @@ def format_text(txt,coord,indent):
                         width = 6.3 *len(code_txt) # Background box - FUTURE FEATURE
                         x_coord = coord[0] - 3 # Background box - FUTURE FEATURE
                         y_coord = coord[1] - 5 # Background box - FUTURE FEATURE
-                        pdf_txt += f"q\n0.3 0.6 0.8 rg\n/F5 10 Tf\n({code_txt}) Tj\n0 0 0 rg\nQ\n"
+                        pdf_txt += f"0.3 0.6 0.8 rg\n/F5 10 Tf\n({code_txt}) Tj\n0 0 0 rg\n"
                         available_chars -= len(code_txt)
                         break
 
@@ -357,14 +357,14 @@ def unordered_lists(line,coord,flags):
         # Set bullet coordinates
         bul_x = x_coord - 5
         bul_y = y_coord + 3
-        line_bullet = f"q\n0 0 0 rg\n{bul_x} {bul_y} m\n{bul_x} {bul_y+2}  {bul_x-3} {bul_y+2}  {bul_x-3} {bul_y} c\n{bul_x-3} {bul_y-2}  {bul_x} {bul_y-2}  {bul_x} {bul_y} c\n{fill}\nQ\n"
+        line_bullet = f"0 0 0 rg\n{bul_x} {bul_y} m\n{bul_x} {bul_y+2}  {bul_x-3} {bul_y+2}  {bul_x-3} {bul_y} c\n{bul_x-3} {bul_y-2}  {bul_x} {bul_y-2}  {bul_x} {bul_y} c\n{fill}\n"
 
     # Square bullet point
     else:
         bul_x = x_coord - 8
         bul_y = y_coord + 3
         width = height = 3
-        line_bullet = f"q\n0 0 0 rg\n{bul_x} {bul_y} {width} {height} re\n{fill}\nQ\n"
+        line_bullet = f"0 0 0 rg\n{bul_x} {bul_y} {width} {height} re\n{fill}\n"
     
     coord[1] -= 15
     line_txt = f"/F1 12 Tf\n1 0 0 1 {x_coord} {y_coord} Tm\n{txt}\n"
@@ -424,7 +424,7 @@ def blockquote(line, coord, flags):
     height = 30 + 15*(num_lines)
     box_y = y_coord - height + 30
     width = 490
-    pdf_line = f"q\n0.9 0.9 0.9 rg\n{box_x} {box_y} {width} {height} re\nf\n0.7 0.7 0.7 rg\n{box_x} {box_y} 5 {height} re\nf\n0 0 0 rg\n/F1 12 Tf\n1 0 0 1 {coord[0]} {y_coord} Tm\n{txt}\n"
+    pdf_line = f"0.9 0.9 0.9 rg\n{box_x} {box_y} {width} {height} re\nf\n0.7 0.7 0.7 rg\n{box_x} {box_y} 5 {height} re\nf\n0 0 0 rg\n/F1 12 Tf\n1 0 0 1 {coord[0]} {y_coord} Tm\n{txt}\n"
 
     coord[0] -= 20
     coord[1] -=30
@@ -463,7 +463,7 @@ def markdown_pdf(filename):
         # If y coordinate is less add new page
         if((coord[1] - 15 * estimated_num_lines) < 100):
             content_length = len(pdf_content) # TO BE FIXED
-            pdf_contents_obj += f"{page_obj_id-1} 0 obj\n<< /Length {content_length} >>\nstream\nBT\n{pdf_content}\nET\nendstream\nendobj\n"
+            pdf_contents_obj += f"{page_obj_id-1} 0 obj\n<< /Length {content_length} >>\nstream\nBT\nq\n{pdf_content}\nQ\nET\nendstream\nendobj\n"
             pdf_content = ""
 
             # Set values for next page
@@ -480,7 +480,7 @@ def markdown_pdf(filename):
        
         # Horizontal break
         elif(line.strip() == '---' or line.strip() == '***' or line.strip() == '___'):
-            pdf_content += f"q\n{coord[0]} {coord[1]} {490} {2} re\nf\nQ\n"
+            pdf_content += f"{coord[0]} {coord[1]} {490} {2} re\nf\n"
         
         # Headings
         elif(re.search(heading_regex,line)):
@@ -509,7 +509,7 @@ def markdown_pdf(filename):
 
     # Raw pdf statements for last page contents
     content_length = len(pdf_content) # TO BE FIXED
-    pdf_contents_obj += f"{page_obj_id-1} 0 obj\n<< /Length {content_length} >>\nstream\nBT\n{pdf_content}\nET\nendstream\nendobj\n"
+    pdf_contents_obj += f"{page_obj_id-1} 0 obj\n<< /Length {content_length} >>\nstream\nBT\nq\n{pdf_content}\nQ\nET\nendstream\nendobj\n"
 
     # Form the pdf header and trailer
     pdf_header = f"%PDF-1.4\n1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n2 0 obj\n<< /Type /Pages /Kids [{page_ids}] /Count {page_count} >>\nendobj\n3 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Times-Roman >>\nendobj\n4 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Times-Bold >>\nendobj\n5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Times-Italic >>\nendobj\n6 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Times-BoldItalic >>\nendobj\n7 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Courier-Bold >>\nendobj\n"
