@@ -456,9 +456,9 @@ def markdown_pdf(filename):
     # Iterate each line of markdown
     for line in lines:
         print(line)
-        heading_num = line.count('#')
+        heading_regex = "^#+ *"
         unorderedlist_regex = "^- *"
-        orderedlist_regex = "^\d. *"
+        orderedlist_regex = "^\d\. *"
         estimated_num_lines = len(line) // 80 
         # If y coordinate is less add new page
         if((coord[1] - 15 * estimated_num_lines) < 100):
@@ -483,7 +483,7 @@ def markdown_pdf(filename):
             pdf_content += f"q\n{coord[0]} {coord[1]} {490} {2} re\nf\nQ\n"
         
         # Headings
-        elif(heading_num):
+        elif(re.search(heading_regex,line)):
             flags['add_newline'] = 1
             pdf_content += headings(line,coord,flags)
         
