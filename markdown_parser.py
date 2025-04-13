@@ -14,8 +14,8 @@ def format_text(txt,coord,indent):
     bold_italic_p2 = r"___(.*?)___"
     bold_p1 = r"\*\*(.*?)\*\*"
     bold_p2 = r"__(.*?)__"
-    italic_p1 = r"\*(.*?)\*"
-    italic_p2 = r"_(.*?)_"
+    italic_p1 = r"\*\S(.*?)\*"
+    italic_p2 = r"_\S(.*?)_"
     code_p = r"`(.*?)`"
     pattern = re.compile("|".join([bold_italic_p1,bold_italic_p2,bold_p1,bold_p2,italic_p1,italic_p2,code_p]))
 
@@ -38,13 +38,13 @@ def format_text(txt,coord,indent):
         # Bold text
         elif(match.group(3) or match.group(4)):
             word = match.group(3) or match.group(4)
-            end_pos = start_pos + 2 + len(word) +2
+            end_pos = start_pos + 2 + len(word) + 2
             bold_pos.append([start_pos,end_pos])
 
         # Italic text
         elif(match.group(5) or match.group(6)):
             word = match.group(5) or match.group(6)
-            end_pos = start_pos +1 +len(word) +1
+            end_pos = start_pos +1 +len(word)+2
             italic_pos.append([start_pos,end_pos])
 
         # Code blocks
@@ -421,8 +421,8 @@ def blockquote(line, coord, flags):
     # Format text
     txt,num_lines = format_text(txt,coord,1)
 
-    height = 30 + 15*(num_lines)
-    box_y = y_coord - height + 30
+    height = 20 + 15*(num_lines)
+    box_y = y_coord - height + 20
     width = 490
     pdf_line = f"0.9 0.9 0.9 rg\n{box_x} {box_y} {width} {height} re\nf\n0.7 0.7 0.7 rg\n{box_x} {box_y} 5 {height} re\nf\n0 0 0 rg\n/F1 12 Tf\n1 0 0 1 {coord[0]} {y_coord} Tm\n{txt}\n"
 
