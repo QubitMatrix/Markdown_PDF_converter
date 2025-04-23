@@ -3,7 +3,7 @@ import sys
 
 # Format text for bold, italic, etc and handle multiline sentences
 def format_text(txt,coord,indent):
-    txt = txt.replace("(","\(").replace(")","\)")
+    txt = txt.replace("(","\(").replace(")","\)") # Escape brackets to avoid issues in raw pdf
     num_lines = 1
     total_chars = 90
     indent_chars = 3 * indent
